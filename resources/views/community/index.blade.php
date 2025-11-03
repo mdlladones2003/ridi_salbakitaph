@@ -1,6 +1,5 @@
 <x-app-layout>
     <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-9 gap-4 mt-5">
-        <!-- Check-in Sidebar -->
         <aside class="card bg-base-100 shadow-md sticky top-6 h-fit col-span-2">
             <div class="card-body">
                 <h3 class="card-title">Mark yourself as</h3>
@@ -59,7 +58,6 @@
             </div>
         </aside>
 
-        <!-- Community Feed -->
         <section class="card bg-base-100 shadow-md col-span-4">
             <div class="card-body">
                 <h2 class="card-title text-2xl mb-4">Community Feed</h2>
@@ -326,7 +324,6 @@
             </div>
         </section>
 
-        <!-- Active Users Sidebar -->
         <aside class="card bg-base-100 shadow-md sticky top-6 h-fit col-span-3">
             <div class="card-body">
                 <h3 class="card-title">Active Users</h3>

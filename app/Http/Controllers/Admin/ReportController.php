@@ -25,12 +25,12 @@ class ReportController extends Controller
     public function updateStatus(Request $request, Report $report)
     {
         $validated = $request->validate([
-            'status' => 'required|in:pending,verified,resolved,false_alarm',
+            'status' => 'required|in:pending,verified,resolved,false_alarm'
         ]);
 
         $report->update([
-            'status' => $validated['status'],
-            'resolved_at' => $validated['status'] === 'resolved' ? now() : null,
+            'status'        => $validated['status'],
+            'resolved_at'   => $validated['status'] === 'resolved' ? now() : null
         ]);
 
         return back()->with('success', 'Report status updated!');
@@ -45,9 +45,9 @@ class ReportController extends Controller
     public function bulkAction(Request $request)
     {
         $validated = $request->validate([
-            'report_ids' => 'required|array',
-            'report_ids.*' => 'exists:reports,report_id',
-            'action' => 'required|string|in:delete,mark_pending,mark_verified,mark_resolved,mark_false_alarm',
+            'report_ids'    => 'required|array',
+            'report_ids.*'  => 'exists:reports,report_id',
+            'action'        => 'required|string|in:delete,mark_pending,mark_verified,mark_resolved,mark_false_alarm'
         ]);
 
         $reports = Report::whereIn('report_id', $validated['report_ids'])->get();
@@ -64,8 +64,8 @@ class ReportController extends Controller
                 $status = str_replace('mark_', '', $validated['action']);
                 foreach ($reports as $report) {
                     $report->update([
-                        'status' => $status,
-                        'resolved_at' => $status === 'resolved' ? now() : null,
+                        'status'        => $status,
+                        'resolved_at'   => $status === 'resolved' ? now() : null
                     ]);
                 }
                 $message = count($reports) . ' report(s) marked as ' . ucfirst(str_replace('_', ' ', $status)) . '.';

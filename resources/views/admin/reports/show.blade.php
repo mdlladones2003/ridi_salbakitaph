@@ -3,8 +3,6 @@
         <h1 class="text-3xl font-bold text-primary mb-6">Report Details</h1>
         <div class="bg-base-100 rounded-lg shadow p-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-
-                <!-- Report Info -->
                 <div>
                     <h2 class="text-xl font-semibold text-secondary mb-2">Report Information</h2>
                     <p class="text-base-content"><strong>Report ID:</strong> {{ $report->report_id }}</p>
@@ -27,7 +25,6 @@
                     @endif
                 </div>
 
-                <!-- Reporter Info -->
                 <div>
                     <h2 class="text-xl font-semibold text-secondary mb-2">Reporter Details</h2>
                     @if ($report->user)
@@ -39,7 +36,6 @@
                     @endif
                 </div>
 
-                <!-- Barangay Info -->
                 <div>
                     <h2 class="text-xl font-semibold text-secondary mb-2">Barangay</h2>
                     @if ($report->barangay)
@@ -50,19 +46,16 @@
                 </div>
             </div>
 
-            <!-- Report Description or Details Section (optional) -->
-            @if(!empty($report->description))
+            @if(!empty($report->content))
                 <div>
-                    <h2 class="text-xl font-semibold text-secondary mb-2">Description</h2>
-                    <p class="whitespace-pre-line text-base-content">{{ $report->description }}</p>
+                    <h2 class="text-xl font-semibold text-secondary mb-2">Content</h2>
+                    <p class="whitespace-pre-line text-base-content">{{ $report->content }}</p>
                 </div>
             @endif
 
-            <!-- Actions -->
             <div class="mt-6 flex flex-wrap gap-4">
                 <a href="{{ route('admin.reports.index') }}" class="btn btn-outline">Back to Reports</a>
 
-                <!-- Form for status update -->
                 <form action="{{ route('admin.reports.update-status', $report) }}" method="POST" class="flex gap-2 items-center">
                     @csrf
                     @method('PATCH')
@@ -78,7 +71,6 @@
                     <button type="submit" class="btn btn-primary">Update Status</button>
                 </form>
 
-                <!-- Delete Report -->
                 <form action="{{ route('admin.reports.destroy', $report) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this report?');">
                     @csrf
                     @method('DELETE')

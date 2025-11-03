@@ -1,62 +1,54 @@
 <x-app-layout>
     <div class="h-screen flex flex-col">
-        <!-- Header -->
         <div class="bg-base-100 border-b border-base-300 px-4 py-3">
             <div class="max-w-7xl mx-auto flex items-center justify-between">
                 <div>
                     <h1 class="text-2xl font-bold">Disaster Map</h1>
-                    <p class="text-xs opacity-60 mt-0.5">Real-time incident reports visualization (Geoapify)</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <div class="stats shadow-sm">
-                        <div class="stat py-2 px-4">
-                            <div class="stat-title text-xs">Total Reports</div>
-                            <div class="stat-value text-xl text-primary">{{ $reports->count() }}</div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Main Layout -->
         <div class="flex-1 flex overflow-hidden">
-            <!-- Sidebar -->
             <div class="w-80 bg-base-100 border-r border-base-300 overflow-y-auto">
                 <div class="p-4 border-b border-base-300">
-                    <h3 class="font-semibold mb-3 flex items-center gap-2">
-                        Map Legend
-                    </h3>
+                    <h3 class="font-semibold mb-3 flex items-center gap-2">Map Legend</h3>
                     <div class="space-y-2 text-sm">
                         <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-full bg-blue-500"></div><span>Verified</span></div>
-                        <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-full bg-yellow-500"></div><span>Pending</span></div>
                         <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-full bg-green-500"></div><span>Resolved</span></div>
                     </div>
                 </div>
 
                 <div class="p-4 space-y-3">
-                    <h3 class="font-semibold text-sm mb-3">Incident Reports ({{ $reports->count() }})</h3>
-                    @forelse($reports as $report)
+                    @php
+                        $visibleReports = $reports->whereIn('status', ['verified', 'resolved']);
+                    @endphp
+                    <h3 class="font-semibold text-sm mb-3">Incident Reports ({{ $visibleReports->count() }})</h3>
+
+                    @forelse($visibleReports as $report)
                         <div class="card bg-base-200 shadow-sm cursor-pointer hover:shadow-md transition"
                              onclick="focusMarker({{ $report->latitude }}, {{ $report->longitude }})">
                             <div class="card-body p-3">
-                                <h4 class="font-semibold text-sm line-clamp-2 capitalize">{{ $report->type }}</h4>
+                                <h4 class="font-semibold text-sm capitalize">{{ ucfirst($report->type) }}</h4>
                                 <p class="text-xs opacity-70 line-clamp-2">{{ $report->content }}</p>
                                 <div class="flex justify-between mt-2 text-xs opacity-60">
                                     <span>📍 {{ $report->barangay->name }}, {{ $report->barangay->municipality }}</span>
                                     <span>{{ $report->created_at->diffForHumans() }}</span>
+                                </div>
+                                <div class="mt-1">
+                                    <span class="badge badge-outline badge-sm capitalize">{{ $report->status }}</span>
                                 </div>
                             </div>
                         </div>
                     @empty
                         <div class="text-center py-8 text-sm opacity-60">
                             <div class="text-4xl mb-2">📋</div>
-                            No reports available
+                            No verified or resolved reports available
                         </div>
                     @endforelse
                 </div>
             </div>
 
-            <!-- Map -->
+            {{-- Map --}}
             <div class="flex-1 relative">
                 <div id="map" class="w-full h-full"></div>
                 <div id="map-loading" class="absolute inset-0 bg-base-100 flex items-center justify-center">
@@ -79,34 +71,28 @@
                 maxZoom: 19
             }).addTo(map);
 
-            const loader = document.getElementById('map-loading');
-            if (loader) loader.classList.add('hidden');
+            document.getElementById('map-loading')?.classList.add('hidden');
 
             const markers = [];
 
-            @foreach($reports as $report)
+            @foreach($reports->whereIn('status', ['verified', 'resolved']) as $report)
                 @if(!empty($report->latitude) && !empty($report->longitude))
                     {
-                        // Color code by status
-                        const color = {
-                            'pending': 'yellow-500',
-                            'verified': 'blue-500',
-                            'resolved': 'green-500'
-                        }['{{ $report->status }}'] || 'gray-400';
+                        let color = '{{ $report->status === "verified" ? "#3b82f6" : "#22c55e" }}'; // blue or green
 
-                        let marker = L.marker([{{ $report->latitude }}, {{ $report->longitude }}], {
-                            icon: L.divIcon({
-                                className: 'custom-marker',
-                                html: `<div class="w-5 h-5 bg-${color} rounded-full border-2 border-white shadow-md"></div>`,
-                                iconSize: [20, 20],
-                                iconAnchor: [10, 10],
-                            }),
+                        const marker = L.circleMarker([{{ $report->latitude }}, {{ $report->longitude }}], {
+                            radius: 8,
+                            fillColor: color,
+                            color: '#ffffff',
+                            weight: 2,
+                            opacity: 1,
+                            fillOpacity: 0.9
                         }).addTo(map);
 
                         marker.bindPopup(`
-                            <div class="p-2">
-                                <div class="badge badge-primary badge-sm mb-2">{{ ucfirst($report->type) }}</div>
-                                <p class="text-xs opacity-70 mb-1">{{ Str::limit(addslashes($report->content ?? ''), 100) }}</p>
+                            <div class="p-2 text-sm">
+                                <div class="font-semibold mb-1 capitalize">{{ ucfirst($report->type) }}</div>
+                                <p class="opacity-70 mb-1">{{ Str::limit(addslashes($report->content ?? ''), 100) }}</p>
                                 <p class="text-xs opacity-60 mb-2">📍 {{ $report->barangay->name }}, {{ $report->barangay->municipality }}</p>
                                 <a href="{{ route('community.reports.show', $report) }}" class="btn btn-xs btn-primary">View Report</a>
                             </div>
@@ -118,11 +104,10 @@
             @endforeach
 
             if (markers.length > 0) {
-                const group = new L.featureGroup(markers);
+                const group = L.featureGroup(markers);
                 map.fitBounds(group.getBounds().pad(0.2));
             }
 
-            // Focus helper
             window.focusMarker = function(lat, lng) {
                 map.setView([lat, lng], 15);
             };
@@ -131,7 +116,6 @@
 
     <style>
         html, body, #map { height: 100%; }
-        .custom-marker { background: transparent; border: none; }
         .leaflet-popup-content-wrapper { border-radius: 0.5rem; }
     </style>
     @endpush

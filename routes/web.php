@@ -40,6 +40,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/community/posts', [CommunityController::class, 'posts'])->name('community.posts');
     Route::get('/community/map', [CommunityController::class, 'map'])->name('community.map');
     Route::get('/community/alerts', [CommunityController::class, 'alerts'])->name('community.alerts');
+    Route::get('/community/reports', [CommunityController::class, 'reports'])->name('community.reports');
     Route::get('/community/search', [CommunityController::class, 'search'])->name('community.search');
 
     // Profile
@@ -51,9 +52,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reports/create', [ReportController::class, 'create'])->name('reports.create');
     Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
     Route::get('/community/reports/{report}', [ReportController::class, 'show'])->name('community.reports.show');
-    Route::get('/reports/{report}/edit', [ReportController::class, 'edit'])->name('reports.edit');
-    Route::put('/reports/{report}', [ReportController::class, 'update'])->name('reports.update');
-    Route::delete('/reports/{report}', [ReportController::class, 'destroy'])->name('reports.destroy');
 
     // Verifications
     Route::post('/reports/{report}/verify', [VerificationController::class, 'store'])->name('reports.verify');
@@ -94,10 +92,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/disasters', [DisasterUpdateController::class, 'index'])->name('disasters.index');
     Route::get('/disasters/type/{type}', [DisasterUpdateController::class, 'byType'])->name('disasters.by-type');
     Route::get('/disasters/{disaster}', [DisasterUpdateController::class, 'show'])->name('disasters.show');
-
-    // Barangays
-    Route::get('/barangays', [BarangayController::class, 'index'])->name('barangays.index');
-    Route::get('/barangays/{barangay}', [BarangayController::class, 'show'])->name('barangays.show');
 
     // Evacuation Centers
     Route::get('/evacuation-centers', [EvacuationCenterController::class, 'index'])->name('evacuation-centers.index');

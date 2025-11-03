@@ -41,6 +41,7 @@ class CommunityController extends Controller
     {
         $reports = Report::with(['user', 'barangay'])
             ->where('status', '!=', 'false_alarm')
+            ->orWhereNull('status')
             ->latest()
             ->get();
 
@@ -68,11 +69,25 @@ class CommunityController extends Controller
         $reports = Report::with(['user', 'barangay'])
             ->whereNotNull('latitude')
             ->whereNotNull('longitude')
-            ->where('status', '!=', 'false_alarm')
+            ->where(function ($q) {
+                $q->where('status', '!=', 'false_alarm')
+                ->orWhereNull('status');
+            })
             ->latest()
             ->get();
 
         return view('community.map.index', compact('reports'));
+    }
+
+    public function reports()
+    {
+        $user = auth()->user();
+
+        $reports = Report::with(['user', 'barangay'])
+            ->latest()
+            ->get();
+
+        return view('community.reports.index', compact('reports'));
     }
 
 
@@ -91,56 +106,62 @@ class CommunityController extends Controller
         return view('community.alerts.index', compact('alerts'));
     }
 
-    /**
-     * Search community content
-     */
     public function search(Request $request)
     {
-        $query = $request->input('q');
+        $query = trim($request->input('q'));
 
-        if (empty($query)) {
-            return redirect()->route('community.index');
+        if (!$query) {
+            return view('community.search', [
+                'query' => '',
+                'posts' => collect(),
+                'users' => collect(),
+                'alerts' => collect(),
+                'activeAlertsCount' => Alert::where('is_active', true)->count(),
+            ]);
         }
 
-        // Search posts
         $posts = Post::with(['author', 'comments.user'])
-            ->where('content', 'LIKE', "%{$query}%")
-            ->orWhereHas('author', function ($q) use ($query) {
-                $q->where('first_name', 'LIKE', "%{$query}%")
-                  ->orWhere('last_name', 'LIKE', "%{$query}%");
+            ->where(function ($q) use ($query) {
+                $q->where('content', 'LIKE', "%{$query}%")
+                  ->orWhereHas('author', function ($sub) use ($query) {
+                    $sub->where('first_name', 'LIKE', "%{$query}%")
+                        ->orWhere('last_name', 'LIKE', "%{$query}%");
+                });
             })
-            ->withCount(['likes', 'comments'])
+            ->withCount(['reactions', 'comments'])
             ->latest()
             ->limit(10)
             ->get();
 
-        // Search users
-        $users = User::where('first_name', 'LIKE', "%{$query}%")
-            ->orWhere('last_name', 'LIKE', "%{$query}%")
-            ->orWhere('email', 'LIKE', "%{$query}%")
+        $users = User::where(function ($q) use ($query) {
+                $q->where('first_name', 'LIKE', "%{$query}%")
+                  ->orWhere('last_name', 'LIKE', "%{$query}%")
+                  ->orWhere('email', 'LIKE', "%{$query}%");
+            })
+            ->with([
+                'posts' => fn($q) => $q->latest()->limit(3),
+                'reports' => fn($q) => $q->latest()->limit(3),
+                'helpOffers' => fn($q) => $q->latest()->limit(3),
+            ])
             ->limit(10)
             ->get();
 
-        // Search alerts
-        $alerts = Alert::where('title', 'LIKE', "%{$query}%")
-            ->orWhere('message', 'LIKE', "%{$query}%")
-            ->where('is_active', true)
+        $alerts = Alert::where('is_active', true)
+                ->where(function ($q) use ($query) {
+                    $q->where('message', 'LIKE', "%{$query}%");
+            })
             ->latest()
             ->limit(5)
             ->get();
 
         $activeAlertsCount = Alert::where('is_active', true)->count();
-        $unreadNotifications = auth()->user()->unreadNotifications()->count();
-        $notifications = auth()->user()->notifications()->limit(5)->get();
 
         return view('community.search', compact(
             'query',
             'posts',
             'users',
             'alerts',
-            'activeAlertsCount',
-            'unreadNotifications',
-            'notifications'
+            'activeAlertsCount'
         ));
     }
 }
