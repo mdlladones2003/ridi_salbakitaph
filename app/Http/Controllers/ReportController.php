@@ -17,7 +17,7 @@ class ReportController extends Controller
         $validated = $request->validate([
             'barangay_id'       => 'required|exists:barangays,barangay_id',
             'type'              => 'required|in:flood,fire,earthquake,typhoon,landslide',
-            'severity'          => 'required|in:low,medium,high,critical',
+            'severity'          => 'required|in:low,moderate,high,critical',
             'content'           => 'required|string|min:10',
             'latitude'          => 'required|numeric',
             'longitude'         => 'required|numeric',
@@ -61,7 +61,7 @@ class ReportController extends Controller
         $validated = $request->validate([
             'barangay_id'       => 'required|exists:barangays,barangay_id',
             'type'              => 'required|in:flood,fire,earthquake,typhoon,landslide',
-            'severity'          => 'required|in:low,medium,high,critical',
+            'severity'          => 'required|in:low,moderate,high,critical',
             'content'           => 'required|string|min:10',
             'latitude'          => 'required|numeric|between:-90,90',
             'longitude'         => 'required|numeric|between:-180,180',

@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('municipality');
             $table->string('province');
-            $table->decimal('latitude', 10, 7);
-            $table->decimal('longitude', 10, 7);
+            $table->decimal('latitude', 18, 14);
+            $table->decimal('longitude', 18, 14);
             $table->enum('risk_level', ['low', 'medium', 'high'])->default('low');
             $table->timestamps();
 

@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('barangay_id')->constrained('barangays', 'barangay_id')->onDelete('cascade');
             $table->string('name');
             $table->text('address');
-            $table->decimal('latitude', 10, 7);
-            $table->decimal('longitude', 10, 7);
+            $table->decimal('latitude', 18, 14);
+            $table->decimal('longitude', 18, 14);
             $table->integer('capacity');
             $table->integer('current_occupancy')->default(0);
             $table->json('facilities')->nullable();

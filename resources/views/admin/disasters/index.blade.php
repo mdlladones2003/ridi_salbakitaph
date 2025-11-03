@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto p-6 space-y-6 mt-20">
+    <div class="max-w-7xl mx-auto p-6 space-y-6">
         <h1 class="text-3xl font-bold text-primary">Disaster Updates</h1>
 
         <!-- Filters and Search -->

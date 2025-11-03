@@ -49,7 +49,7 @@ class PostSeeder extends Seeder
                 'author_id' => 2,
                 'content'   => 'Weather update: PAGASA monitoring low pressure area east of Mindanao. May develop into tropical depression. Stay informed and prepare your emergency kits.',
                 'category'  => 'update',
-            ],
+            ]
         ];
 
         foreach ($posts as $post) {

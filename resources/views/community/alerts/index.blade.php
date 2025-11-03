@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto px-4 py-8 mt-20">
+    <div class="max-w-7xl mx-auto px-4 py-8">
         <!-- Header -->
         <div class="flex items-center justify-between mb-6">
             <div>
@@ -41,10 +41,10 @@
                         $config = $severityConfig[$alert->severity] ?? $severityConfig['info'];
                     @endphp
 
-                    <div class="card bg-base-100 shadow-xl border-l-4 {{ $alert->severity === 'critical' ? 'border-error' : ($alert->severity === 'warning' ? 'border-warning' : 'border-info') }}">
+                    <div class="card bg-base-100 shadow-md border-l-4 {{ $alert->severity === 'critical' ? 'border-error' : ($alert->severity === 'warning' ? 'border-warning' : 'border-info') }}">
                         <div class="card-body">
                             <!-- Alert Header -->
-                            <div class="flex items-start justify-between gap-4 mb-3">
+                            <div class="flex items-start justify-between gap-2 mb-3">
                                 <div class="flex items-start gap-3 flex-1">
                                     <div class="text-3xl">{{ $config['icon'] }}</div>
                                     <div class="flex-1">

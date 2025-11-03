@@ -77,15 +77,5 @@
         Evacuation Center
       </a>
     </li>
-    <li>
-      <a href="{{ route('admin.evacuation-routes.index') }}"
-         class="{{ request()->routeIs('admin.evacuation-routes.*') ? 'active bg-primary text-primary-content' : 'hover:bg-primary/40 hover:text-primary-content' }} flex items-center gap-3 focus:outline-none">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 17l6-10M15 17l-6-10" />
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18" />
-        </svg>
-        Evacuation Routes
-      </a>
-    </li>
   </ul>
 </aside>

@@ -1,5 +1,5 @@
 <x-app-layout>
-  <div class="p-6 max-w-7xl mx-auto mt-20">
+  <div class="p-6 max-w-7xl mx-auto">
     <!-- Page Heading -->
     <h1 class="text-3xl font-bold mb-6 text-base-content">Badge Management</h1>
 
@@ -102,19 +102,4 @@
       {{ $badges->links() }}
     </div>
   </div>
-
-  <!-- Tom Select CSS & JS for searchable user dropdown -->
-  <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      new TomSelect('#user_id', {
-        dropdownDirection: 'bottom',
-        maxDropdownHeight: '200px',
-        dropdownAutoWidth: true,
-        create: false,
-      });
-    });
-  </script>
 </x-app-layout>

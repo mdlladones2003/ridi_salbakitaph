@@ -17,7 +17,7 @@ class BarangayController extends Controller
 
     public function show(Barangay $barangay)
     {
-        $barangay->load(['reports', 'evacuationCenters', 'evacuationRoutes']);
+        $barangay->load(['reports', 'evacuationCenters']);
 
         $stats = [
             'total_reports'      => $barangay->reports()->count(),

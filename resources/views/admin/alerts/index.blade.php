@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto p-6 space-y-6 mt-20">
+    <div class="max-w-7xl mx-auto p-6 space-y-6">
         <div class="flex justify-between items-center">
             <h1 class="text-3xl font-bold text-primary">Active Alerts</h1>
             <a href="{{ route('admin.alerts.create') }}" class="btn btn-primary whitespace-nowrap">Create New Alert</a>

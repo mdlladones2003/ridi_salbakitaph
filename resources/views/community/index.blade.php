@@ -1,7 +1,7 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-9 gap-4 mt-20">
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-9 gap-4 mt-5">
         <!-- Check-in Sidebar -->
-        <aside class="card bg-base-100 shadow-xl sticky top-6 h-fit col-span-2">
+        <aside class="card bg-base-100 shadow-md sticky top-6 h-fit col-span-2">
             <div class="card-body">
                 <h3 class="card-title">Mark yourself as</h3>
 
@@ -60,7 +60,7 @@
         </aside>
 
         <!-- Community Feed -->
-        <section class="card bg-base-100 shadow-xl col-span-4">
+        <section class="card bg-base-100 shadow-md col-span-4">
             <div class="card-body">
                 <h2 class="card-title text-2xl mb-4">Community Feed</h2>
 
@@ -219,7 +219,7 @@
                                     x-show="showReactions"
                                     @mouseenter="showReactions = true"
                                     @mouseleave="showReactions = false"
-                                    class="absolute card bg-base-100 shadow-xl p-2 mt-6 left-0 z-20"
+                                    class="absolute card bg-base-100 shadow-md p-2 mt-6 left-0 z-20"
                                     style="min-width: 200px">
                                     <form method="POST" action="{{ route('reactions.store', $post->post_id) }}" class="flex gap-2 justify-center">
                                         @csrf
@@ -327,7 +327,7 @@
         </section>
 
         <!-- Active Users Sidebar -->
-        <aside class="card bg-base-100 shadow-xl sticky top-6 h-fit col-span-3">
+        <aside class="card bg-base-100 shadow-md sticky top-6 h-fit col-span-3">
             <div class="card-body">
                 <h3 class="card-title">Active Users</h3>
                 @if(isset($activeUsers) && $activeUsers->count() > 0)

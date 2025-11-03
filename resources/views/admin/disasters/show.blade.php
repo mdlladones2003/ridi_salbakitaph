@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-4xl mx-auto p-6 space-y-6 mt-20">
+    <div class="max-w-4xl mx-auto p-6 space-y-6">
         <h1 class="text-3xl font-bold text-primary capitalize">{{ $disaster->type }} Update</h1>
 
         @if(session('success'))

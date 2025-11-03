@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="p-6 max-w-5xl mx-auto space-y-6 mt-20">
+    <div class="p-6 max-w-5xl mx-auto space-y-6">
         <h1 class="text-3xl font-bold text-primary mb-6">Report Details</h1>
         <div class="bg-base-100 rounded-lg shadow p-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">

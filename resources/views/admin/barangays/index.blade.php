@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto p-6 space-y-6 mt-20">
+    <div class="max-w-7xl mx-auto p-6 space-y-6">
         <h1 class="text-3xl font-bold text-primary">Barangays</h1>
 
         <!-- Filters and Search -->
@@ -42,7 +42,6 @@
                             <th>Province</th>
                             <th class="text-center">Reports</th>
                             <th class="text-center">Evacuation Centers</th>
-                            <th class="text-center">Evacuation Routes</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -54,7 +53,6 @@
                                 <td>{{ $barangay->province }}</td>
                                 <td class="text-center">{{ $barangay->reports_count }}</td>
                                 <td class="text-center">{{ $barangay->evacuation_centers_count }}</td>
-                                <td class="text-center">{{ $barangay->evacuation_routes_count }}</td>
                                 <td class="space-x-2 whitespace-nowrap">
                                 <a href="{{ route('admin.barangays.show', $barangay) }}" class="btn btn-sm btn-info">View</a>
                                 <a href="{{ route('admin.barangays.edit', $barangay) }}" class="btn btn-sm btn-warning">Edit</a>

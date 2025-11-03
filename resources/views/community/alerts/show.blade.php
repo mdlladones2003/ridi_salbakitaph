@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-4xl mx-auto px-4 py-8 mt-20">
+    <div class="max-w-4xl mx-auto px-4 py-8">
         <!-- Back Button -->
         <div class="mb-6">
             <a href="{{ route('community.alerts') }}" class="btn btn-ghost btn-sm">

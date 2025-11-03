@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\GeoapifyHelper;
 use App\Models\Post;
 use App\Models\CheckIn;
 use App\Models\Alert;
@@ -39,6 +40,32 @@ class CommunityController extends Controller
     public function map()
     {
         $reports = Report::with(['user', 'barangay'])
+            ->where('status', '!=', 'false_alarm')
+            ->latest()
+            ->get();
+
+        foreach ($reports as $report) {
+            if (empty($report->latitude) || empty($report->longitude)) {
+                $barangay = $report->barangay;
+
+                if ($barangay) {
+                    [$lat, $lng] = GeoapifyHelper::getCoordinates(
+                        $barangay->municipality,
+                        $barangay->name,
+                        $barangay->province
+                    );
+
+                    if ($lat && $lng) {
+                        $report->update([
+                            'latitude'  => $lat,
+                            'longitude' => $lng
+                        ]);
+                    }
+                }
+            }
+        }
+
+        $reports = Report::with(['user', 'barangay'])
             ->whereNotNull('latitude')
             ->whereNotNull('longitude')
             ->where('status', '!=', 'false_alarm')
@@ -47,6 +74,7 @@ class CommunityController extends Controller
 
         return view('community.map.index', compact('reports'));
     }
+
 
     public function alerts()
     {

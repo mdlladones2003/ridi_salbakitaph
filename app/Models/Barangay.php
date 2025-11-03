@@ -23,10 +23,6 @@ class Barangay extends Model
         return $this->hasMany(Report::class, 'barangay_id', 'barangay_id');
     }
 
-    public function evacuationRoutes() {
-        return $this->hasMany(EvacuationRoute::class, 'barangay_id', 'barangay_id');
-    }
-
     public function evacuationCenters() {
         return $this->hasMany(EvacuationCenter::class, 'barangay_id', 'barangay_id');
     }

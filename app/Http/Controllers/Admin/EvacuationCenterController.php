@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\{EvacuationCenter, Barangay};
 use Illuminate\Http\Request;
+use App\Helpers\GeoapifyHelper;
 
 class EvacuationCenterController extends Controller
 {
@@ -12,10 +13,9 @@ class EvacuationCenterController extends Controller
     {
         $query = EvacuationCenter::with('barangay');
 
-        // Search
+        // Search filter
         if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where('name', 'like', "%{$search}%");
+            $query->where('name', 'like', '%' . $request->search . '%');
         }
 
         // Barangay filter
@@ -29,7 +29,6 @@ class EvacuationCenterController extends Controller
         }
 
         $centers = $query->latest()->paginate(20);
-
         $barangays = Barangay::orderBy('name')->get();
 
         return view('admin.evacuation-centers.index', compact('centers', 'barangays'));
@@ -70,7 +69,6 @@ class EvacuationCenterController extends Controller
             'is_active'         => 'boolean'
         ]);
 
-        // Validate occupancy doesn't exceed capacity
         if ($validated['current_occupancy'] > $validated['capacity']) {
             return back()->withErrors(['current_occupancy' => 'Occupancy cannot exceed capacity'])->withInput();
         }
@@ -103,7 +101,6 @@ class EvacuationCenterController extends Controller
             'is_active'         => 'boolean'
         ]);
 
-        // Validate occupancy doesn't exceed capacity
         if ($validated['current_occupancy'] > $validated['capacity']) {
             return back()->withErrors(['current_occupancy' => 'Occupancy cannot exceed capacity'])->withInput();
         }
@@ -169,4 +166,32 @@ class EvacuationCenterController extends Controller
 
         return back()->with('success', 'Facility removed successfully!');
     }
+
+    public function barangayInfo(Barangay $barangay)
+{
+    $latitude = $barangay->latitude;
+    $longitude = $barangay->longitude;
+
+    // Build full address from barangay, municipality, and province
+    $address = "{$barangay->name}, {$barangay->municipality}, {$barangay->province}, Philippines";
+
+    // Fallback to Geoapify if coordinates missing
+    if (!$latitude || !$longitude) {
+        [$latitude, $longitude] = GeoapifyHelper::getCoordinates(
+            $barangay->municipality,
+            $barangay->name,
+            $barangay->province
+        );
+    }
+
+    return response()->json([
+        'name' => $barangay->name,
+        'municipality' => $barangay->municipality,
+        'province' => $barangay->province,
+        'address' => $address,
+        'latitude' => $latitude,
+        'longitude' => $longitude,
+    ]);
+}
+
 }

@@ -32,7 +32,7 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "app/Helpers/PhilAtlasHelper.php"
+            "app/Helpers/GeoapifyHelper.php"
         ]
     },
     "autoload-dev": {
