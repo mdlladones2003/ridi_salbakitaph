@@ -54,10 +54,10 @@
                                 </p>
                             </div>
 
-                            {{-- Status or Verification Count --}}
                             @if($report->status === 'pending')
                                 <span class="badge badge-warning">
-                                    {{ $report->verification_count }} Verification{{ ($report->verification_count) !== 1 ? 's' : '' }}
+                                    {{ $report->report_verified_count ?? 0 }}
+                                    {{ ($report->report_verified_count ?? 0) >= 2 ? 'Verifications' : 'Verification' }}
                                 </span>
                             @elseif($report->status === 'verified')
                                 <span class="badge badge-info">Verified</span>

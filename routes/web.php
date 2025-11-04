@@ -74,8 +74,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/posts/{post}/reactions', [ReactionController::class, 'store'])->name('reactions.store');
 
     // Help Offers
-    Route::get('/help-offers', [HelpOfferController::class, 'index'])->name('help-offers.index');
-    Route::get('/help-offers/create', [HelpOfferController::class, 'create'])->name('help-offers.create');
     Route::post('/help-offers', [HelpOfferController::class, 'store'])->name('help-offers.store');
     Route::delete('/help-offers/{helpOffer}', [HelpOfferController::class, 'destroy'])->name('help-offers.destroy');
     Route::patch('/help-offers/{helpOffer}/toggle', [HelpOfferController::class, 'toggleAvailability'])->name('help-offers.toggle');

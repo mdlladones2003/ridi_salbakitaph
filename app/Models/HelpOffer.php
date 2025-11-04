@@ -13,8 +13,6 @@ class HelpOffer extends Model
         'user_id',
         'offer_type',
         'description',
-        'latitude',
-        'longitude',
         'is_available',
         'capacity',
         'valid_until'

@@ -35,11 +35,11 @@ class ReportSeeder extends Seeder
             $resolvedAt = $status === 'resolved' ? Carbon::now()->subDays(rand(0, 5)) : null;
 
             Report::create([
-                'user_id'           => $user->user_id,
-                'barangay_id'       => $barangay->barangay_id,
-                'type'              => $type,
-                'severity'          => $severity,
-                'content'           => match ($type) {
+                'user_id'               => $user->user_id,
+                'barangay_id'           => $barangay->barangay_id,
+                'type'                  => $type,
+                'severity'              => $severity,
+                'content'               => match ($type) {
                     'flood'             => "Flooding reported in {$barangay->name}. Residents advised to move to higher ground.",
                     'fire'              => "Fire incident reported near the market area of {$barangay->name}.",
                     'earthquake'        => "Tremors felt in {$barangay->name}, potential aftershocks expected.",
@@ -47,16 +47,16 @@ class ReportSeeder extends Seeder
                     'typhoon'           => "Strong winds and rain affecting {$barangay->name} due to typhoon.",
                     default             => "Incident reported in {$barangay->name}.",
                 },
-                'status'            => $status,
-                'media'             => [fake()->imageUrl(640, 480, 'disaster', true, $type)],
-                'latitude'          => $barangay->latitude,
-                'longitude'         => $barangay->longitude,
-                'verification_count'=> rand(0, 20),
-                'affected_count'    => rand(0, 100),
-                'reported_at'       => Carbon::now()->subDays(rand(0, 15))->subHours(rand(0, 23)),
-                'resolved_at'       => $resolvedAt,
-                'created_at'        => now(),
-                'updated_at'        => now()
+                'status'                => $status,
+                'media'                 => [fake()->imageUrl(640, 480, 'disaster', true, $type)],
+                'latitude'              => $barangay->latitude,
+                'longitude'             => $barangay->longitude,
+                'report_verified_count' => rand(0, 20),
+                'affected_count'        => rand(0, 100),
+                'reported_at'           => Carbon::now()->subDays(rand(0, 15))->subHours(rand(0, 23)),
+                'resolved_at'           => $resolvedAt,
+                'created_at'            => now(),
+                'updated_at'            => now()
             ]);
         }
     }

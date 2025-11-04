@@ -19,7 +19,7 @@ class Report extends Model
         'media',
         'latitude',
         'longitude',
-        'verification_count',
+        'report_verified_count',
         'affected_count',
         'reported_at',
         'resolved_at'

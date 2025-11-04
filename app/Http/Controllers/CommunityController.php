@@ -6,6 +6,7 @@ use App\Helpers\GeoapifyHelper;
 use App\Models\Post;
 use App\Models\CheckIn;
 use App\Models\Alert;
+use App\Models\HelpOffer;
 use App\Models\Report;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -16,25 +17,63 @@ class CommunityController extends Controller
     {
         $userId = auth()->id();
 
+        $activeUsers = User::where('last_active_at', '>=', now()->subMinutes(15))->get();
+
         $posts = Post::with(['author', 'comments.user', 'reactions'])
             ->latest()
             ->paginate(15);
 
         $userReactionByPost = [];
-
         foreach ($posts as $post) {
             $reaction = $post->reactions->firstWhere('user_id', $userId);
             $userReactionByPost[$post->post_id] = $reaction?->emoji_type;
         }
 
-        $checkIns = CheckIn::with('user')
+        $offers = HelpOffer::with('user')
+            ->where('is_available', true)
             ->latest()
-            ->limit(10)
             ->get();
 
-        $activeUsers = User::where('last_active_at', '>=', now()->subMinutes(15))->get();
+        // Badge Leaderboards
+        $topReporters = User::withCount(['reports as report_verified_count' => function ($query) {
+                $query->whereIn('status', ['verified', 'resolved']);
+            }])
+            ->having('report_verified_count', '>', 0)
+            ->orderByDesc('report_verified_count')
+            ->limit(5)
+            ->get();
 
-        return view('community.index', compact('posts', 'checkIns', 'activeUsers', 'userReactionByPost'));
+        $topVerifiers = User::withCount(['verifications as verified_count' => function ($query) {
+                $query->where('status', 'verified');
+            }])
+            ->having('verified_count', '>', 0)
+            ->orderByDesc('verified_count')
+            ->limit(5)
+            ->get();
+
+        $topHelpers = User::withCount(['helpOffers as help_offers_count' => function ($query) {
+                    $query->where('is_available', true);
+            }])
+            ->having('help_offers_count', '>', 0)
+            ->orderByDesc('help_offers_count')
+            ->limit(5)
+            ->get();
+
+        $topByReputation = User::orderBy('reputation_score', 'desc')
+            ->orderByDesc('reputation_score')
+            ->limit(5)
+            ->get();
+
+        return view('community.index', compact(
+            'activeUsers',
+            'userReactionByPost',
+            'posts',
+            'offers',
+            'topReporters',
+            'topVerifiers',
+            'topHelpers',
+            'topByReputation'
+        ));
     }
 
     public function map()

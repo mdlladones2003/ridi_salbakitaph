@@ -22,7 +22,7 @@ return new class extends Migration
             $table->json('media')->nullable();
             $table->decimal('latitude', 18, 14);
             $table->decimal('longitude', 18, 14);
-            $table->integer('verification_count')->default(0);
+            $table->integer('report_verified_count')->default(0);
             $table->integer('affected_count')->nullable();
             $table->timestamp('reported_at');
             $table->timestamp('resolved_at')->nullable();

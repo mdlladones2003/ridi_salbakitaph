@@ -1,14 +1,17 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\{Report, Verification};
 
 class VerificationController extends Controller
 {
     public function store(Report $report)
     {
+        $userId = auth()->id();
+
         $existing = Verification::where('report_id', $report->report_id)
-            ->where('verifier_id', auth()->id())
+            ->where('verifier_id', $userId)
             ->first();
 
         if ($existing) {
@@ -16,15 +19,18 @@ class VerificationController extends Controller
         }
 
         Verification::create([
-            'report_id'   => $report->report_id,
-            'verifier_id' => auth()->id(),
-            'status'      => 'verified',
-            'verified_at' => now()
+            'report_id'      => $report->report_id,
+            'verifier_id'    => $userId,
+            'status'         => 'verified',
+            'verified_count' => 1,
+            'verified_at'    => now()
         ]);
 
-        $report->increment('verification_count');
+        $report->increment('report_verified_count');
 
-        if ($report->verification_count >= 3 && $report->status === 'pending') {
+        $report->refresh();
+
+        if ($report->report_verified_count >= 3 && $report->status === 'pending') {
             $report->update(['status' => 'verified']);
         }
 

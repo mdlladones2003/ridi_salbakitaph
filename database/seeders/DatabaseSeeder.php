@@ -19,7 +19,8 @@ class DatabaseSeeder extends Seeder
             EvacuationCenterSeeder::class,
             DisasterUpdateSeeder::class,
             AlertSeeder::class,
-            ReportSeeder::class
+            ReportSeeder::class,
+            HelpOfferSeeder::class
         ]);
     }
 }

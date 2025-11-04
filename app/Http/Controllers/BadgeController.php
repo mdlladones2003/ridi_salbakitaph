@@ -44,30 +44,4 @@ class BadgeController extends Controller
 
         return view('badges.index', compact('badges', 'availableBadges'));
     }
-
-    public function leaderboard()
-    {
-        $topReporters = User::withCount(['reports' => function($query) {
-            $query->where('status', 'verified');
-        }])
-            ->orderBy('reports_count', 'desc')
-            ->limit(10)
-            ->get();
-
-        $topVerifiers = User::withCount('verifications')
-            ->orderBy('verifications_count', 'desc')
-            ->limit(10)
-            ->get();
-
-        $topHelpers = User::withCount('helpOffers')
-            ->orderBy('help_offers_count', 'desc')
-            ->limit(10)
-            ->get();
-
-        $topByReputation = User::orderBy('reputation_score', 'desc')
-            ->limit(10)
-            ->get();
-
-        return view('badges.leaderboard', compact('topReporters', 'topVerifiers', 'topHelpers', 'topByReputation'));
-    }
 }

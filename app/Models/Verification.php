@@ -13,6 +13,7 @@ class Verification extends Model
         'report_id',
         'verifier_id',
         'status',
+        'verified_count',
         'verified_at'
     ];
 
