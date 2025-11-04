@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\DisasterUpdate;
-use Illuminate\Support\Str;
 
 class DisasterUpdateSeeder extends Seeder
 {

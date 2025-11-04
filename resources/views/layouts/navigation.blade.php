@@ -22,16 +22,10 @@
                             Map
                         </a>
 
-                        <a href="{{ route('community.reports') }}"
+                        <a href="{{ route('community.awareness') }}"
                             class="pb-1 border-b-2 transition font-medium
-                            {{ request()->routeIs('community.reports') ? 'text-blue-600 border-blue-600' : 'text-gray-700 border-transparent hover:text-blue-600 hover:border-blue-400' }}">
-                            Reports
-                        </a>
-
-                        <a href="{{ route('community.alerts') }}"
-                            class="pb-1 border-b-2 transition font-medium
-                            {{ request()->routeIs('community.alerts') ? 'text-blue-600 border-blue-600' : 'text-gray-700 border-transparent hover:text-blue-600 hover:border-blue-400' }}">
-                            Alerts
+                            {{ request()->routeIs('community.awareness') ? 'text-blue-600 border-blue-600' : 'text-gray-700 border-transparent hover:text-blue-600 hover:border-blue-400' }}">
+                            Awareness
                         </a>
                     </div>
 

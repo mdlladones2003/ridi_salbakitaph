@@ -5,12 +5,6 @@ use App\Models\Alert;
 
 class AlertController extends Controller
 {
-    public function show(Alert $alert)
-    {
-        $alert->load('disasterUpdate');
-        return view('community.alerts.show', compact('alert'));
-    }
-
     public function archive()
     {
         $alerts = Alert::with('disasterUpdate')

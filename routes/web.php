@@ -10,11 +10,9 @@ use App\Http\Controllers\{
     ReactionController,
     HelpOfferController,
     VerificationController,
-    BarangayController,
     EvacuationCenterController,
     AlertController,
-    BadgeController,
-    DisasterUpdateController
+    BadgeController
 };
 use App\Http\Controllers\Admin\{
     DashboardController as AdminDashboardController,
@@ -37,10 +35,8 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
     // Community
     Route::get('/community', [CommunityController::class, 'index'])->name('community.index');
-    Route::get('/community/posts', [CommunityController::class, 'posts'])->name('community.posts');
     Route::get('/community/map', [CommunityController::class, 'map'])->name('community.map');
-    Route::get('/community/alerts', [CommunityController::class, 'alerts'])->name('community.alerts');
-    Route::get('/community/reports', [CommunityController::class, 'reports'])->name('community.reports');
+    Route::get('/community/awareness', [CommunityController::class, 'awareness'])->name('community.awareness');
     Route::get('/community/search', [CommunityController::class, 'search'])->name('community.search');
 
     // Profile
@@ -49,16 +45,14 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Reports
-    Route::get('/reports/create', [ReportController::class, 'create'])->name('reports.create');
     Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
     Route::get('/community/reports/{report}', [ReportController::class, 'show'])->name('community.reports.show');
 
     // Verifications
-    Route::post('/reports/{report}/verify', [VerificationController::class, 'store'])->name('reports.verify');
+    Route::post('/community/{report}/verify', [VerificationController::class, 'store'])->name('reports.verify');
 
     // Check-ins
     Route::post('/check-in', [CheckInController::class, 'store'])->name('check-in.store');
-    Route::get('/check-ins', [CheckInController::class, 'index'])->name('check-ins.index');
 
     // Posts
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
@@ -75,33 +69,17 @@ Route::middleware(['auth'])->group(function () {
 
     // Help Offers
     Route::post('/help-offers', [HelpOfferController::class, 'store'])->name('help-offers.store');
-    Route::delete('/help-offers/{helpOffer}', [HelpOfferController::class, 'destroy'])->name('help-offers.destroy');
     Route::patch('/help-offers/{helpOffer}/toggle', [HelpOfferController::class, 'toggleAvailability'])->name('help-offers.toggle');
 
     // Alerts
     Route::get('/community/alerts/archive', [AlertController::class, 'archive'])->name('community.alerts.archive');
-    Route::get('/community/alerts/{alert}', [AlertController::class, 'show'])->name('community.alerts.show');
 
     // Badges & Leaderboard
     Route::get('/badges', [BadgeController::class, 'index'])->name('badges.index');
-    Route::get('/leaderboard', [BadgeController::class, 'leaderboard'])->name('badges.leaderboard');
-
-    // Disaster Updates
-    Route::get('/disasters', [DisasterUpdateController::class, 'index'])->name('disasters.index');
-    Route::get('/disasters/type/{type}', [DisasterUpdateController::class, 'byType'])->name('disasters.by-type');
-    Route::get('/disasters/{disaster}', [DisasterUpdateController::class, 'show'])->name('disasters.show');
 
     // Evacuation Centers
     Route::get('/evacuation-centers', [EvacuationCenterController::class, 'index'])->name('evacuation-centers.index');
     Route::get('/evacuation-centers/{evacuationCenter}', [EvacuationCenterController::class, 'show'])->name('evacuation-centers.show');
-
-    // Force Logout Route
-    Route::post('/force-logout', function () {
-        auth()->logout();
-        request()->session()->invalidate();
-        request()->session()->regenerateToken();
-        return redirect('/')->with('status', 'You have been logged out by the system.');
-    })->name('force-logout')->middleware('auth');
 });
 
 // Admin Routes

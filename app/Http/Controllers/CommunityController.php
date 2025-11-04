@@ -6,6 +6,8 @@ use App\Helpers\GeoapifyHelper;
 use App\Models\Post;
 use App\Models\CheckIn;
 use App\Models\Alert;
+use App\Models\Barangay;
+use App\Models\DisasterUpdate;
 use App\Models\HelpOffer;
 use App\Models\Report;
 use App\Models\User;
@@ -118,31 +120,57 @@ class CommunityController extends Controller
         return view('community.map.index', compact('reports'));
     }
 
-    public function reports()
+    public function awareness(Request $request)
     {
-        $user = auth()->user();
+        $barangays = Barangay::orderBy('name')->get();
+        $activeTab = $request->query('tab', 'reports');
+
+        $currentPage = [
+            'reports' => $request->query('reports_page', 1),
+            'alerts' => $request->query('alerts_page', 1),
+            'disasters' => $request->query('disasters_page', 1),
+        ];
+
+        foreach ($currentPage as $key => $page) {
+            if ($activeTab !== $key) {
+                $currentPage[$key] = 1;
+            }
+        }
 
         $reports = Report::with(['user', 'barangay'])
             ->latest()
-            ->get();
+            ->paginate(6, ['*'], 'reports_page', $currentPage['reports'])
+            ->appends(['tab' => 'reports']);
 
-        return view('community.reports.index', compact('reports'));
-    }
+        $reports->each(function ($report) {
+            $report->verified_by_me = $report->verifications()
+                ->where('verifier_id', auth()->id())
+                ->exists();
+        });
 
-
-    public function alerts()
-    {
         $alerts = Alert::with('disasterUpdate')
             ->where('is_active', true)
-            ->where(function($query) {
+            ->where(function ($query) {
                 $query->where('expires_at', '>', now())
                     ->orWhereNull('expires_at');
             })
             ->orderByRaw("FIELD(severity, 'critical', 'warning', 'info')")
             ->orderBy('sent_at', 'desc')
-            ->paginate(20);
+            ->paginate(6, ['*'], 'alerts_page', $currentPage['alerts'])
+            ->appends(['tab' => 'alerts']);
 
-        return view('community.alerts.index', compact('alerts'));
+        $disasters = DisasterUpdate::withCount('alerts')
+            ->latest()
+            ->paginate(6, ['*'], 'disasters_page', $currentPage['disasters'])
+            ->appends(['tab' => 'disasters']);
+
+        return view('community.awareness.index', compact(
+            'barangays',
+            'reports',
+            'alerts',
+            'disasters',
+            'activeTab'
+        ));
     }
 
     public function search(Request $request)

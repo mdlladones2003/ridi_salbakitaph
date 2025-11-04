@@ -45,10 +45,10 @@ class ReportSeeder extends Seeder
                     'earthquake'        => "Tremors felt in {$barangay->name}, potential aftershocks expected.",
                     'landslide'         => "Landslide reported along hillside areas of {$barangay->name}.",
                     'typhoon'           => "Strong winds and rain affecting {$barangay->name} due to typhoon.",
-                    default             => "Incident reported in {$barangay->name}.",
+                    default             => "Incident reported in {$barangay->name}."
                 },
                 'status'                => $status,
-                'media'                 => [fake()->imageUrl(640, 480, 'disaster', true, $type)],
+                'media'                 => null,
                 'latitude'              => $barangay->latitude,
                 'longitude'             => $barangay->longitude,
                 'report_verified_count' => rand(0, 20),

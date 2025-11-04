@@ -12,7 +12,6 @@ class DisasterUpdateController extends Controller
     {
         $query = DisasterUpdate::withCount('alerts');
 
-        // Type filter
         if ($request->filled('type')) {
             $query->where('type', $request->type);
         }
