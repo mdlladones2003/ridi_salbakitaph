@@ -9,9 +9,16 @@ use Illuminate\Http\Request;
 
 class AlertController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $alerts = Alert::with('disasterUpdate')->latest()->paginate(15);
+        $query = Alert::withCount('disasterUpdate');
+
+        // Severity filter
+        if ($request->filled('severity')) {
+            $query->where('severity', $request->severity);
+        }
+
+        $alerts = $query->latest()->paginate(10);
 
         return view('admin.alerts.index', compact('alerts'));
     }

@@ -13,7 +13,7 @@ class UserController extends Controller
     {
         $query = User::withCount(['reports', 'checkIns', 'posts', 'badges']);
 
-        // Search
+        // Search filter
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
@@ -62,11 +62,6 @@ class UserController extends Controller
         ];
 
         return view('admin.users.show', compact('user', 'stats', 'recentActivity'));
-    }
-
-    public function create()
-    {
-        return view('admin.users.create');
     }
 
     public function store(Request $request)

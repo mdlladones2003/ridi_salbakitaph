@@ -15,7 +15,8 @@ class EvacuationCenterController extends Controller
 
         // Search filter
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $search = $request->search;
+            $query->where('name', 'like', "%{$search}%");
         }
 
         // Barangay filter

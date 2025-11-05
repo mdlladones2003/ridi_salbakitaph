@@ -79,13 +79,12 @@ class DisasterUpdateController extends Controller
 
         $disaster->update($validated);
 
-        return redirect()->route('admin.disasters.show', $disaster)
+        return redirect()->route('admin.disasters.index', $disaster)
             ->with('success', 'Disaster update updated successfully!');
     }
 
     public function destroy(DisasterUpdate $disaster)
     {
-        // Check if disaster has active alerts
         if ($disaster->alerts()->where('is_active', true)->count() > 0) {
             return back()->with('error', 'Cannot delete disaster with active alerts!');
         }

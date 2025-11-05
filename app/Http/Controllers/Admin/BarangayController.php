@@ -13,7 +13,7 @@ class BarangayController extends Controller
     {
         $query = Barangay::withCount(['reports', 'evacuationCenters']);
 
-        // 🔍 Search
+        // Search
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -23,12 +23,12 @@ class BarangayController extends Controller
             });
         }
 
-        // ⚠️ Risk level filter
+        // Risk level filter
         if ($request->filled('risk_level')) {
             $query->where('risk_level', $request->risk_level);
         }
 
-        // 🗺️ Province filter
+        // Province filter
         if ($request->filled('province')) {
             $query->where('province', $request->province);
         }

@@ -8,11 +8,15 @@ use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $reports = Report::with(['user', 'barangay'])
-            ->latest('reported_at')
-            ->paginate(20);
+        $query = Report::with(['user', 'barangay'])->latest('reported_at');
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $reports = $query->paginate(10);
 
         return view('admin.reports.index', compact('reports'));
     }
@@ -39,7 +43,7 @@ class ReportController extends Controller
     public function destroy(Report $report)
     {
         $report->delete();
-        return back()->with('success', 'Report successfully deleted');
+        return redirect()->route('admin.reports.index')->with('success', 'Report successfully deleted');
     }
 
     public function bulkAction(Request $request)

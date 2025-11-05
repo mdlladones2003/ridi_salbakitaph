@@ -1,6 +1,6 @@
 <x-guest-layout>
-    <div class="min-h-screen flex flex-col lg:flex-row items-center justify-center bg-base-100">
-        <div class="hidden lg:flex flex-col justify-center items-center w-1/2 h-screen px-12 bg-white relative">
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-center">
+        <div class="hidden lg:flex flex-col justify-center items-center w-1/2 h-screen px-12relative">
             <div class="absolute -top-20 -left-20 w-72 h-72 bg-blue-100 rounded-full blur-3xl opacity-50"></div>
             <div class="relative text-center max-w-md fade-in">
                 <h1 class="text-4xl font-bold text-gray-800 mb-4">Welcome Back 👋</h1>
@@ -13,10 +13,8 @@
         </div>
 
         <div class="flex flex-col justify-center items-center w-full lg:w-1/2 p-10 lg:p-16 fade-in text-center">
-            <a href="{{ route('home') }}" class="text-3xl font-bold text-blue-700 mb-2 cursor-pointer">SalbaKitaPH</a>
-            <p class="text-gray-500 mb-8 text-sm">Your safety companion — anytime, anywhere.</p>
-
-            <x-auth-session-status class="mb-4 w-full max-w-sm" :status="session('status')" />
+            <a href="{{ route('home') }}" class="text-3xl font-bold text-blue-700 mb-1 cursor-pointer">SalbaKitaPH</a>
+            <p class="text-gray-500 mb-4 text-sm">Your safety companion — anytime, anywhere.</p>
 
             <div class="card w-full max-w-sm bg-white border border-gray-200 shadow-sm rounded-md">
                 <div class="card-body p-7">
