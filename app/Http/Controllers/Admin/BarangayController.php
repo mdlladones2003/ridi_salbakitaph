@@ -13,7 +13,6 @@ class BarangayController extends Controller
     {
         $query = Barangay::withCount(['reports']);
 
-        // Search
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -23,12 +22,10 @@ class BarangayController extends Controller
             });
         }
 
-        // Risk level filter
         if ($request->filled('risk_level')) {
             $query->where('risk_level', $request->risk_level);
         }
 
-        // Province filter
         if ($request->filled('province')) {
             $query->where('province', $request->province);
         }
@@ -69,7 +66,6 @@ class BarangayController extends Controller
             'risk_level'   => 'required|in:low,medium,high',
         ]);
 
-        // 🌍 Fetch coordinates via Geoapify
         [$lat, $lng] = GeoapifyHelper::getCoordinates(
             $validated['municipality'],
             $validated['name'],
@@ -86,11 +82,6 @@ class BarangayController extends Controller
         Barangay::create($validated);
 
         return redirect()->route('admin.barangays.index')->with('success', 'Barangay created successfully!');
-    }
-
-    public function edit(Barangay $barangay)
-    {
-        return view('admin.barangays.create', compact('barangay'));
     }
 
     public function update(Request $request, Barangay $barangay)

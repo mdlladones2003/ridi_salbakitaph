@@ -115,7 +115,6 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
 
     // Barangays Management
     Route::get('/barangays', [AdminBarangayController::class, 'index'])->name('barangays.index');
-    Route::get('/barangays/create', [AdminBarangayController::class, 'create'])->name('barangays.create');
     Route::post('/barangays', [AdminBarangayController::class, 'store'])->name('barangays.store');
     Route::get('/barangays/{barangay}', [AdminBarangayController::class, 'show'])->name('barangays.show');
     Route::get('/barangays/{barangay}/edit', [AdminBarangayController::class, 'edit'])->name('barangays.edit');
