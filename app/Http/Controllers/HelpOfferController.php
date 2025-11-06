@@ -10,7 +10,7 @@ class HelpOfferController extends Controller
     {
         $validated = $request->validate([
             'offer_type'     => 'required|in:rescue,shelter,medical,supplies',
-            'description'    => 'required|string|min:10|max:500',
+            'description'    => 'required|string|min:1|max:500',
             'capacity'       => 'nullable|integer|min:1',
             'valid_until'    => 'nullable|date|after:now'
         ]);

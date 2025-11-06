@@ -4,9 +4,6 @@
             <h1 class="text-3xl font-bold text-base-content flex items-center gap-2">
                 <x-lucide-award class="w-6 h-6" /> Badge Management
             </h1>
-            <label for="badge-modal" class="btn bg-blue-600 hover:bg-blue-700 btn-sm text-white flex items-center gap-1 cursor-pointer">
-                <x-lucide-plus-circle class="w-4 h-4" /> Award New Badge
-            </label>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -25,48 +22,6 @@
                     <p class="text-3xl font-extrabold">{{ $stat['value'] }}</p>
                 </div>
             @endforeach
-        </div>
-
-        <input type="checkbox" id="badge-modal" class="modal-toggle" />
-        <div class="modal modal-bottom sm:modal-middle">
-            <div class="modal-box max-w-md bg-base-100 rounded-md">
-                <label for="badge-modal" class="btn btn-sm btn-circle absolute right-3 top-3">✕</label>
-                <h3 class="text-lg font-bold text-base-content mb-4 flex items-center gap-2">
-                    <x-lucide-award class="w-5 h-5" /> Award New Badge
-                </h3>
-
-                <form action="{{ route('admin.badges.store') }}" method="POST" class="space-y-3">
-                    @csrf
-                    <div>
-                        <label class="font-semibold text-sm text-base-content">User</label>
-                        <select name="user_id" class="select select-bordered w-full mt-1" required>
-                            <option disabled selected>Select a User</option>
-                            @foreach (\App\Models\User::orderBy('first_name')->get() as $user)
-                                <option value="{{ $user->user_id }}">
-                                    {{ $user->first_name }} {{ $user->last_name }} ({{ $user->email }})
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('user_id') <p class="text-error text-sm mt-1">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div>
-                        <label class="font-semibold text-sm text-base-content">Badge Type</label>
-                        <select name="badge_type" class="select select-bordered w-full mt-1" required>
-                            <option disabled selected>Select Badge Type</option>
-                            <option value="reporter">Reporter</option>
-                            <option value="verifier">Verifier</option>
-                            <option value="helper">Helper</option>
-                            <option value="hero">Hero</option>
-                        </select>
-                        @error('badge_type') <p class="text-error text-sm mt-1">{{ $message }}</p> @enderror
-                    </div>
-
-                    <button type="submit" class="btn btn-primary w-full mt-2">
-                        <x-lucide-gift class="w-4 h-4 mr-1" /> Award Badge
-                    </button>
-                </form>
-            </div>
         </div>
 
         <div class="bg-white border border-base-300 rounded-md shadow-sm overflow-hidden">

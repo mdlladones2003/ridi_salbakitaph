@@ -10,7 +10,6 @@ use App\Http\Controllers\{
     ReactionController,
     HelpOfferController,
     VerificationController,
-    EvacuationCenterController,
     AlertController,
     BadgeController
 };
@@ -20,7 +19,6 @@ use App\Http\Controllers\Admin\{
     AlertController as AdminAlertController,
     UserController as AdminUserController,
     BarangayController as AdminBarangayController,
-    EvacuationCenterController as AdminEvacuationCenterController,
     DisasterUpdateController as AdminDisasterUpdateController,
     BadgeController as AdminBadgeController
 };
@@ -41,8 +39,6 @@ Route::middleware(['auth'])->group(function () {
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Reports
     Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
@@ -73,13 +69,6 @@ Route::middleware(['auth'])->group(function () {
 
     // Alerts
     Route::get('/community/alerts/archive', [AlertController::class, 'archive'])->name('community.alerts.archive');
-
-    // Badges & Leaderboard
-    Route::get('/badges', [BadgeController::class, 'index'])->name('badges.index');
-
-    // Evacuation Centers
-    Route::get('/evacuation-centers', [EvacuationCenterController::class, 'index'])->name('evacuation-centers.index');
-    Route::get('/evacuation-centers/{evacuationCenter}', [EvacuationCenterController::class, 'show'])->name('evacuation-centers.show');
 });
 
 // Admin Routes
@@ -134,16 +123,6 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::delete('/barangays/{barangay}', [AdminBarangayController::class, 'destroy'])->name('barangays.destroy');
     Route::post('/barangays/fetch-coordinates', [AdminBarangayController::class, 'fetchCoordinates'])->name('barangays.fetch-coordinates');
 
-    // Evacuation Centers Management
-    Route::get('/evacuation-centers', [AdminEvacuationCenterController::class, 'index'])->name('evacuation-centers.index');
-    Route::get('/evacuation-centers/create', [AdminEvacuationCenterController::class, 'create'])->name('evacuation-centers.create');
-    Route::post('/evacuation-centers', [AdminEvacuationCenterController::class, 'store'])->name('evacuation-centers.store');
-    Route::get('/evacuation-centers/{evacuationCenter}', [AdminEvacuationCenterController::class, 'show'])->name('evacuation-centers.show');
-    Route::get('/evacuation-centers/{evacuationCenter}/edit', [AdminEvacuationCenterController::class, 'edit'])->name('evacuation-centers.edit');
-    Route::put('/evacuation-centers/{evacuationCenter}', [AdminEvacuationCenterController::class, 'update'])->name('evacuation-centers.update');
-    Route::delete('/evacuation-centers/{evacuationCenter}', [AdminEvacuationCenterController::class, 'destroy'])->name('evacuation-centers.destroy');
-    Route::patch('/evacuation-centers/{evacuationCenter}/occupancy', [AdminEvacuationCenterController::class, 'updateOccupancy'])->name('evacuation-centers.occupancy');
-    Route::get('/barangays/{barangay}/info', [AdminEvacuationCenterController::class, 'barangayInfo'])->name('admin.barangays.info');
 });
 
 

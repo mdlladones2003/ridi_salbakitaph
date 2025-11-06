@@ -19,7 +19,7 @@ return new class extends Migration
             $table->enum('severity', ['low', 'moderate', 'high', 'critical']);
             $table->enum('status', ['pending', 'verified', 'resolved', 'false_alarm'])->default('pending');
             $table->text('content');
-            $table->json('media')->nullable();
+            $table->string('image_path')->nullable();
             $table->decimal('latitude', 18, 14);
             $table->decimal('longitude', 18, 14);
             $table->integer('report_verified_count')->default(0);

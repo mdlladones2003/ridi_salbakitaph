@@ -58,9 +58,9 @@ class DisasterUpdateController extends Controller
             'affected_area' => 'required|string|max:255'
         ]);
 
-        $disaster = DisasterUpdate::create($validated);
+        DisasterUpdate::create($validated);
 
-        return redirect()->route('admin.disasters.show', $disaster)
+        return redirect()->route('admin.disasters.index')
             ->with('success', 'Disaster update created successfully!');
     }
 

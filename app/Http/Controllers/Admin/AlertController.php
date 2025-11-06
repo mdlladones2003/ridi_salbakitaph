@@ -45,7 +45,7 @@ class AlertController extends Controller
             'is_active' => true,
         ]);
 
-        return redirect()->route('admin.dashboard')->with('success', 'Alert broadcast successfully!');
+        return redirect()->route('admin.alerts.index')->with('success', 'Alert broadcast successfully!');
     }
 
     public function toggleActive(Alert $alert)

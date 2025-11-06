@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Barangay;
 use Illuminate\Http\Request;
-use App\Helpers\GeoapifyHelper; // ✅ add this import
+use App\Helpers\GeoapifyHelper;
 
 class BarangayController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Barangay::withCount(['reports', 'evacuationCenters']);
+        $query = Barangay::withCount(['reports']);
 
         // Search
         if ($request->filled('search')) {
@@ -42,17 +42,14 @@ class BarangayController extends Controller
     public function show(Barangay $barangay)
     {
         $barangay->load([
-            'reports' => fn($query) => $query->latest()->limit(10),
-            'evacuationCenters'
+            'reports' => fn($query) => $query->latest()->limit(10)
         ]);
 
         $stats = [
             'total_reports'      => $barangay->reports()->count(),
             'pending_reports'    => $barangay->reports()->where('status', 'pending')->count(),
             'verified_reports'   => $barangay->reports()->where('status', 'verified')->count(),
-            'critical_reports'   => $barangay->reports()->where('severity', 'critical')->count(),
-            'evacuation_centers' => $barangay->evacuationCenters()->count(),
-            'active_centers'     => $barangay->evacuationCenters()->where('is_active', true)->count(),
+            'critical_reports'   => $barangay->reports()->where('severity', 'critical')->count()
         ];
 
         $reportsByType = $barangay->reports()
@@ -61,11 +58,6 @@ class BarangayController extends Controller
             ->get();
 
         return view('admin.barangays.show', compact('barangay', 'stats', 'reportsByType'));
-    }
-
-    public function create()
-    {
-        return view('admin.barangays.create');
     }
 
     public function store(Request $request)

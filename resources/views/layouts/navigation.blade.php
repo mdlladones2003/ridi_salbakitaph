@@ -1,10 +1,17 @@
-<nav class="max-w-7xl mx-auto h-16 px-6 flex items-center justify-between">
-    <!-- Left side -->
+<nav class="max-w-7xl mx-auto h-16
+    @auth
+        @if (auth()->user()->isAdmin())
+            px-6
+        @endif
+    @endauth
+    flex items-center justify-between">
     <div class="flex items-center space-x-3">
         <a href="{{ route('community.index') }}" class="text-xl font-semibold text-blue-700 hover:text-blue-800">
             SalbaKitaPH
         </a>
+    </div>
 
+    <div class="flex items-center space-x-6">
         @auth
             @if (in_array(Auth::user()->role, ['user', 'official', 'volunteer']))
                 <div class="flex items-center space-x-4 ml-6">
@@ -26,13 +33,7 @@
                         Awareness
                     </a>
                 </div>
-            @endif
-        @endauth
-    </div>
 
-    <div class="flex items-center space-x-6">
-        @auth
-            @if (in_array(Auth::user()->role, ['user', 'official', 'volunteer']))
                 <form action="{{ route('community.search') }}" method="GET" class="relative flex items-center w-64 group">
                     <input type="text" name="q" value="{{ request('q') }}" placeholder="Search"
                         class="w-full border border-gray-300 rounded-full py-2 pl-10 pr-4 text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition duration-200 group-hover:shadow-md">

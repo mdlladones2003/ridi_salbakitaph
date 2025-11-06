@@ -13,14 +13,9 @@
                 </div>
             </div>
 
-            <div class="flex gap-2">
-                <a href="{{ route('admin.barangays.edit', $barangay) }}" class="btn bg-blue-600 hover:bg-blue-700 text-white btn-sm">
-                    <x-lucide-pencil class="w-4 h-4" /> Edit
-                </a>
-                <a href="{{ route('admin.barangays.index') }}" class="btn btn-outline btn-sm">
-                    <x-lucide-arrow-left class="w-4 h-4 mr-1" /> Back to List
-                </a>
-            </div>
+            <a href="{{ route('admin.barangays.index') }}" class="btn btn-outline btn-sm">
+                <x-lucide-arrow-left class="w-4 h-4 mr-1" /> Back to List
+            </a>
         </div>
 
         @if(session('success'))
@@ -50,11 +45,6 @@
                 <x-lucide-alert-triangle class="w-5 h-5 absolute top-3 right-3 opacity-60" />
                 <div class="text-2xl font-bold">{{ $stats['critical_reports'] }}</div>
                 <p class="text-sm font-medium">Critical</p>
-            </div>
-            <div class="bg-primary text-primary-content rounded-md p-4 shadow-sm relative">
-                <x-lucide-house class="w-5 h-5 absolute top-3 right-3 opacity-60" />
-                <div class="text-2xl font-bold">{{ $stats['evacuation_centers'] }}</div>
-                <p class="text-sm font-medium">Evacuation Centers</p>
             </div>
         </div>
 
