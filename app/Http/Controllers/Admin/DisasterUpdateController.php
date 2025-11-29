@@ -12,7 +12,6 @@ class DisasterUpdateController extends Controller
     {
         $query = DisasterUpdate::withCount('alerts');
 
-        // Type filter
         if ($request->filled('type')) {
             $query->where('type', $request->type);
         }
@@ -59,9 +58,9 @@ class DisasterUpdateController extends Controller
             'affected_area' => 'required|string|max:255'
         ]);
 
-        $disaster = DisasterUpdate::create($validated);
+        DisasterUpdate::create($validated);
 
-        return redirect()->route('admin.disasters.show', $disaster)
+        return redirect()->route('admin.disasters.index')
             ->with('success', 'Disaster update created successfully!');
     }
 
@@ -80,13 +79,12 @@ class DisasterUpdateController extends Controller
 
         $disaster->update($validated);
 
-        return redirect()->route('admin.disasters.show', $disaster)
+        return redirect()->route('admin.disasters.index', $disaster)
             ->with('success', 'Disaster update updated successfully!');
     }
 
     public function destroy(DisasterUpdate $disaster)
     {
-        // Check if disaster has active alerts
         if ($disaster->alerts()->where('is_active', true)->count() > 0) {
             return back()->with('error', 'Cannot delete disaster with active alerts!');
         }

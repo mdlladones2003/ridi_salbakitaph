@@ -16,8 +16,6 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users', 'user_id')->onDelete('cascade');
             $table->enum('offer_type', ['rescue', 'shelter', 'medical', 'supplies']);
             $table->text('description')->nullable();
-            $table->decimal('latitude', 10, 7);
-            $table->decimal('longitude', 10, 7);
             $table->boolean('is_available')->default(true);
             $table->integer('capacity')->nullable();
             $table->timestamp('valid_until')->nullable();

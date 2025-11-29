@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto px-4 py-8 mt-20">
+    <div class="max-w-7xl mx-auto py-8">
         <!-- Header -->
         <div class="flex items-center justify-between mb-6">
             <div>
@@ -87,7 +87,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                <a href="{{ route('alerts.show', $alert) }}" class="btn btn-sm btn-ghost">
+                                <a href="{{ route('community.alerts.show', $alert) }}" class="btn btn-sm btn-ghost">
                                     View Details
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />

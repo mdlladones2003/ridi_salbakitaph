@@ -16,17 +16,16 @@ class Report extends Model
         'severity',
         'status',
         'content',
-        'media',
+        'image_path',
         'latitude',
         'longitude',
-        'verification_count',
+        'report_verified_count',
         'affected_count',
         'reported_at',
         'resolved_at'
     ];
 
     protected $casts = [
-        'media'         => 'array',
         'reported_at'   => 'datetime',
         'resolved_at'   => 'datetime'
     ];

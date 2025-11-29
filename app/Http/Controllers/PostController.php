@@ -11,9 +11,9 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'content'  => 'required|string|min:10',
+            'content'  => 'required|string|min:1',
             'category' => 'required|in:story,tips,update',
-            'image'    => 'nullable|image|max:2048',
+            'image'    => 'nullable|image|max:2048'
         ]);
 
         if ($request->hasFile('image')) {
@@ -34,7 +34,7 @@ class PostController extends Controller
         }
 
         $validated = $request->validate([
-            'content'  => 'required|string|min:10',
+            'content'  => 'required|string|min:1',
             'category' => 'required|in:story,tips,update',
             'image'    => 'nullable|image|max:2048',
         ]);

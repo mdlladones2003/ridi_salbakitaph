@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id('verification_id');
             $table->foreignId('report_id')->constrained('reports', 'report_id')->onDelete('cascade');
             $table->foreignId('verifier_id')->constrained('users', 'user_id')->onDelete('cascade');
-            $table->enum('status', ['verified', 'disputed']);
-            $table->text('notes')->nullable();
+            $table->enum('status', ['verified']);
+            $table->integer('verified_count')->default(0);
             $table->timestamp('verified_at');
             $table->timestamps();
         });

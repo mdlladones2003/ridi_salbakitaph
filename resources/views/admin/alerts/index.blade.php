@@ -1,22 +1,48 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto p-6 space-y-6 mt-20">
-        <div class="flex justify-between items-center">
-            <h1 class="text-3xl font-bold text-primary">Active Alerts</h1>
-            <a href="{{ route('admin.alerts.create') }}" class="btn btn-primary whitespace-nowrap">Create New Alert</a>
+    <div class="max-w-7xl mx-auto p-6 space-y-6">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="bg-primary/10 text-base-content p-2 rounded-lg">
+                    <x-lucide-bell-ring class="w-6 h-6" />
+                </div>
+                <h1 class="text-3xl font-bold text-base-content">Active Alerts</h1>
+            </div>
+            <a href="{{ route('admin.alerts.create') }}" class="btn btn-sm bg-blue-600 hover:bg-blue-700 text-white px-4">
+                <x-lucide-plus class="w-4 h-4" />
+                New Alert
+            </a>
+        </div>
+
+        <div class="flex justify-end">
+            <form method="GET" action="{{ route('admin.alerts.index') }}"
+                class="flex flex-wrap items-center gap-3 bg-base-100 border border-base-300 rounded-md shadow-sm p-3 w-auto">
+
+                <select name="severity" class="select select-bordered select-md w-44">
+                    <option value="">All Severities</option>
+                    <option value="info" @selected(request('severity')=='info')>Info</option>
+                    <option value="warning" @selected(request('severity')=='warning')>Warning</option>
+                    <option value="critical" @selected(request('severity')=='critical')>Critical</option>
+                </select>
+
+                <button type="submit" class="btn btn-md bg-blue-600 hover:bg-blue-700 text-white px-4">
+                    <x-lucide-filter class="w-4 h-4" />
+                    Filter
+                </button>
+            </form>
         </div>
 
         @if(session('success'))
             <div class="alert alert-success shadow">
-            {{ session('success') }}
+                <x-lucide-check-circle class="w-5 h-5" />
+                <span>{{ session('success') }}</span>
             </div>
         @endif
 
-        <div class="overflow-x-auto rounded-lg border border-base-300 shadow-sm">
-            <table class="table w-full table-zebra">
-                <thead>
+        <div class="overflow-x-auto border border-base-300 rounded-md bg-base-100 shadow-sm">
+            <table class="table w-full">
+                <thead class="text-base-content text-xs uppercase tracking-wider">
                     <tr>
-                        <th>Alert ID</th>
-                        <th>Disaster</th>
+                        <th>Disaster Type</th>
                         <th>Message</th>
                         <th>Severity</th>
                         <th>Sent At</th>
@@ -25,74 +51,98 @@
                     </tr>
                 </thead>
                 <tbody>
-                @forelse ($alerts as $alert)
-                <tr>
-                    <td class="font-mono">{{ $alert->alert_id }}</td>
-                    <td class="capitalize">{{ $alert->disasterUpdate->type ?? 'N/A' }}</td>
-                    <td class="max-w-xs">{{ $alert->message }}</td>
-                    <td>
-                        <span class="badge
-                            @if($alert->severity === 'info') badge-info
-                            @elseif($alert->severity === 'warning') badge-warning
-                            @elseif($alert->severity === 'critical') badge-error
-                            @else badge-neutral @endif capitalize">
-                            {{ $alert->severity }}
-                        </span>
-                    </td>
-                    <td>{{ $alert->sent_at->format('M d, Y - h:i A') }}</td>
-                    <td>
-                        @if ($alert->is_active)
-                            <span class="badge badge-success">Active</span>
-                        @else
-                            <span class="badge badge-neutral">Inactive</span>
-                        @endif
-                    </td>
-                    <td class="text-center space-x-2 whitespace-nowrap">
-                        <!-- Toggle Active Form -->
-                        <form action="{{ route('admin.alerts.toggle', $alert) }}" method="POST" class="inline">
-                            @csrf
-                            @method('PATCH')
-                            <button type="submit" class="btn btn-xs btn-ghost">
+                    @forelse ($alerts as $alert)
+                        <tr class="hover:bg-blue-50/50 transition">
+                            <td class="capitalize font-semibold">{{ ucfirst($alert->disasterUpdate->type ) }}</td>
+                            <td class="max-w-md">{{ $alert->message }}</td>
+                            <td>
+                                <span class="badge capitalize
+                                    @if($alert->severity === 'info') bg-blue-100 text-blue-700
+                                    @elseif($alert->severity === 'warning') bg-yellow-100 text-yellow-700
+                                    @elseif($alert->severity === 'critical') bg-red-100 text-red-700
+                                    @else bg-gray-100 text-gray-700 @endif">
+                                    {{ $alert->severity }}
+                                </span>
+                            </td>
+                            <td class="text-sm">{{ $alert->sent_at->format('M d, Y - h:i A') }}</td>
+                            <td>
                                 @if ($alert->is_active)
-                                    <!-- Eye-Off Icon for Deactivate -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-7 0-10-7-10-7a17.555 17.555 0 014.058-5.196m3.819-1.64A10.06 10.06 0 0112 5c7 0 10 7 10 7a17.615 17.615 0 01-1.45 2.675m-2.673 2.674L6.343 6.343"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18" />
-                                    </svg>
+                                    <span class="badge bg-green-100 text-green-700 border-none font-medium">Active</span>
                                 @else
-                                    <!-- Eye Icon for Activate -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
+                                    <span class="badge bg-gray-200 text-gray-700 border-none font-medium">Inactive</span>
                                 @endif
-                            </button>
-                        </form>
+                            </td>
 
-                        <!-- Delete Alert Form -->
-                        <form action="{{ route('admin.alerts.destroy', $alert) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this alert?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-xs btn-error">
-                            <!-- Trash Icon -->
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4m-4 0a1 1 0 00-1 1v1h6V4a1 1 0 00-1-1m-4 0h4" />
-                            </svg>
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                @empty
-                    <tr>
-                        <td colspan="7" class="text-center py-12 text-base-content/60">No alerts found.</td>
-                    </tr>
-                @endforelse
+                            <td class="text-center whitespace-nowrap">
+                                <form action="{{ route('admin.alerts.toggle', $alert) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="btn btn-ghost btn-xs text-green-600 hover:bg-green-50">
+                                        @if ($alert->is_active)
+                                            <x-lucide-eye-off class="w-4 h-4" />
+                                        @else
+                                            <x-lucide-eye class="w-4 h-4" />
+                                        @endif
+                                    </button>
+                                </form>
+
+                                <label for="modal-delete-{{ $alert->alert_id }}" class="btn btn-ghost btn-xs text-red-600 hover:bg-red-50 cursor-pointer">
+                                    <x-lucide-trash class="w-4 h-4" />
+                                </label>
+
+                                <input type="checkbox" id="modal-delete-{{ $alert->alert_id }}" class="modal-toggle" />
+                                <div class="modal">
+                                    <div class="modal-box rounded-md border border-base-300 shadow-lg p-6 max-w-sm">
+                                        <div class="flex items-center gap-2 mb-3">
+                                            <div class="bg-red-100 text-red-600 p-2 rounded-full">
+                                                <x-lucide-alert-triangle class="w-5 h-5" />
+                                            </div>
+                                            <h3 class="font-semibold text-lg text-red-600">Confirm Deletion</h3>
+                                        </div>
+
+                                        <div class="space-y-2">
+                                            <p class="text-sm text-base-content text-wrap">
+                                                You are about to delete the alert:
+                                                <strong>{{ $alert->message }}</strong>
+                                            </p>
+                                            <p class="text-xs text-red-500 font-medium">
+                                                This action cannot be undone.
+                                            </p>
+                                        </div>
+
+                                        <div class="modal-action mt-5 flex justify-end gap-2">
+                                            <label for="modal-delete-{{ $alert->alert_id }}"
+                                                class="btn btn-ghost btn-sm border border-base-300 hover:bg-base-200">
+                                                Cancel
+                                            </label>
+
+                                            <form action="{{ route('admin.alerts.destroy', $alert) }}" method="POST" class="inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="btn btn-sm bg-red-600 hover:bg-red-700 text-white flex items-center px-2">
+                                                    <x-lucide-trash-2 class="w-4 h-4" />
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="text-center py-12 text-base-content/60">
+                                No alerts found.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
 
-        <div>
-        {{ $alerts->links() }}
+        <div class="mt-4">
+            {{ $alerts->withQueryString()->links() }}
         </div>
     </div>
 </x-app-layout>

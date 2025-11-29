@@ -32,12 +32,6 @@ class AuthenticatedSessionController extends Controller
             case 'admin':
                 $route = 'admin.dashboard';
                 break;
-            case 'official':
-                $route = 'official.dashboard';
-                break;
-            case 'volunteer':
-                $route = 'volunteer.dashboard';
-                break;
             default: // user
                 $route = 'community.index';
         }

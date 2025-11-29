@@ -15,9 +15,6 @@ return new class extends Migration
             $table->id('check_in_id');
             $table->foreignId('user_id')->constrained('users', 'user_id')->onDelete('cascade');
             $table->enum('status', ['safe', 'need_help', 'evacuating']);
-            $table->text('notes')->nullable();
-            $table->decimal('latitude', 10, 7)->nullable();
-            $table->decimal('longitude', 10, 7)->nullable();
             $table->timestamps();
         });
     }

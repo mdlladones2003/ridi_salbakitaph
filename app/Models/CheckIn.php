@@ -11,10 +11,7 @@ class CheckIn extends Model
 
     protected $fillable = [
         'user_id',
-        'status',
-        'notes',
-        'latitude',
-        'longitude'
+        'status'
     ];
 
     // Relationships

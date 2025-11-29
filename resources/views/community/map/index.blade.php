@@ -1,79 +1,65 @@
 <x-app-layout>
-    <div class="h-screen flex flex-col mt-20">
+    <div class="h-screen flex flex-col">
+        {{-- Header --}}
         <div class="bg-base-100 border-b border-base-300 px-4 py-3">
             <div class="max-w-7xl mx-auto flex items-center justify-between">
-                <div>
-                    <h1 class="text-2xl font-bold">Disaster Map</h1>
-                    <p class="text-xs opacity-60 mt-0.5">Real-time incident reports visualization</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <div class="stats shadow-sm">
-                        <div class="stat py-2 px-4">
-                            <div class="stat-title text-xs">Total Reports</div>
-                            <div class="stat-value text-xl text-primary">{{ $reports->count() }}</div>
-                        </div>
-                    </div>
-                </div>
+                <h1 class="text-2xl font-bold">Disaster Map</h1>
             </div>
         </div>
 
         <div class="flex-1 flex overflow-hidden">
-            <!-- Sidebar -->
+            {{-- Sidebar --}}
             <div class="w-80 bg-base-100 border-r border-base-300 overflow-y-auto">
                 <div class="p-4 border-b border-base-300">
-                    <h3 class="font-semibold mb-3 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                        </svg>
-                        Map Legend
-                    </h3>
+                    <h3 class="font-semibold mb-3 flex items-center gap-2">Map Legend</h3>
                     <div class="space-y-2 text-sm">
                         <div class="flex items-center gap-2">
-                            <div class="w-4 h-4 rounded-full bg-primary"></div>
-                            <span>Incident Reports</span>
+                            <div class="w-4 h-4 rounded-full bg-blue-500"></div>
+                            <span>Verified</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-4 h-4 rounded-full bg-green-500"></div>
+                            <span>Resolved</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Reports List -->
                 <div class="p-4 space-y-3">
-                    <h3 class="font-semibold text-sm mb-3">Incident Reports ({{ $reports->count() }})</h3>
-                    @forelse($reports as $report)
-                        <div class="card bg-base-200 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
-                             onclick="focusMarker({{ $report->latitude }}, {{ $report->longitude }}, {{ $report->report_id }})">
+                    @php
+                        $visibleReports = $reports->whereIn('status', ['verified', 'resolved']);
+                    @endphp
+
+                    <h3 class="font-semibold text-sm mb-3">
+                        Incident Reports ({{ $visibleReports->count() }})
+                    </h3>
+
+                    @forelse($visibleReports as $report)
+                        <div class="card bg-base-200 shadow-sm cursor-pointer hover:shadow-md transition"
+                             onclick="focusMarker({{ $report->report_id }})">
                             <div class="card-body p-3">
-                                <div class="flex items-start justify-between gap-2">
-                                    @if($report->status === 'verified')
-                                        <div class="badge badge-success badge-xs">Verified</div>
-                                    @endif
-                                </div>
-                                <h4 class="font-semibold text-sm line-clamp-2">{{ $report->type }}</h4>
+                                <h4 class="font-semibold text-sm capitalize">{{ ucfirst($report->type) }}</h4>
                                 <p class="text-xs opacity-70 line-clamp-2">{{ $report->content }}</p>
-                                <div class="flex items-center justify-between mt-2">
-                                    <div class="text-xs opacity-60">
-                                        📍 {{ $report->barangay->name }}, {{ $report->barangay->municipality }}
-                                    </div>
-                                    <div class="text-xs opacity-60">
-                                        {{ $report->created_at->diffForHumans() }}
-                                    </div>
+                                <div class="flex justify-between mt-2 text-xs opacity-60">
+                                    <span>📍 {{ $report->barangay->name }}, {{ $report->barangay->municipality }}</span>
+                                    <span>{{ $report->created_at->diffForHumans() }}</span>
+                                </div>
+                                <div class="mt-1">
+                                    <span class="badge badge-outline badge-sm capitalize">{{ $report->status }}</span>
                                 </div>
                             </div>
                         </div>
                     @empty
                         <div class="text-center py-8 text-sm opacity-60">
                             <div class="text-4xl mb-2">📋</div>
-                            No reports available
+                            No verified or resolved reports available
                         </div>
                     @endforelse
                 </div>
             </div>
 
-            <!-- Map -->
+            {{-- Map --}}
             <div class="flex-1 relative">
                 <div id="map" class="w-full h-full"></div>
-
-                <!-- Loading -->
                 <div id="map-loading" class="absolute inset-0 bg-base-100 flex items-center justify-center">
                     <span class="loading loading-spinner loading-lg text-primary"></span>
                 </div>
@@ -81,105 +67,106 @@
         </div>
     </div>
 
+    {{-- ✅ Prepare JSON Data --}}
+    @php
+        $reportData = $reports
+            ->whereIn('status', ['verified', 'resolved'])
+            ->map(function ($r) {
+                return [
+                    'id' => $r->report_id, // unique ID
+                    'lat' => $r->latitude ? (float) $r->latitude : null,
+                    'lng' => $r->longitude ? (float) $r->longitude : null,
+                    'status' => $r->status,
+                    'type' => $r->type,
+                    'content' => $r->content,
+                    'barangay' => optional($r->barangay)->name,
+                    'municipality' => optional($r->barangay)->municipality,
+                    'url' => route('community.reports.show', $r),
+                ];
+            })
+            ->values()
+            ->all();
+    @endphp
+
     @push('scripts')
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
-    <script
-        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-    </script>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <script>
+        <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const mapContainer = document.getElementById('map');
-            if (!mapContainer) {
-                console.error('Map container not found');
-                return;
-            }
+            const map = L.map('map').setView([13.4125, 123.4131], 10);
 
-            const defaultCenter = [13.4125, 123.4131];
-            const map = L.map('map').setView(defaultCenter, 10);
-
-            // Add base tiles
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-            }).addTo(map);
-
-            // Hide loader
-            const loader = document.getElementById('map-loading');
-            if (loader) loader.classList.add('hidden');
-
-            const markers = [];
-
-            @foreach($reports as $report)
-                @if(!empty($report->latitude) && !empty($report->longitude))
+            L.tileLayer(
+                'https://maps.geoapify.com/v1/tile/osm-carto/{z}/{x}/{y}.png?apiKey={{ config("services.geoapify.key") }}',
                 {
-                    let marker = L.marker([{{ $report->latitude }}, {{ $report->longitude }}], {
-                        icon: L.divIcon({
-                            className: 'custom-marker',
-                            html: '<div class="w-6 h-6 bg-primary rounded-full border-2 border-white shadow-lg"></div>',
-                            iconSize: [24, 24],
-                            iconAnchor: [12, 12],
-                        }),
-                    }).addTo(map);
-
-                    marker.bindPopup(`
-                        <div class="p-2">
-                            <div class="badge badge-primary badge-sm mb-2">{{ $report->type }}</div>
-                            <h3 class="font-bold text-sm mb-1">{{ addslashes($report->type) }}</h3>
-                            <p class="text-xs opacity-70 mb-1">{{ Str::limit(addslashes($report->content ?? ''), 100) }}</p>
-                            <p class="text-xs opacity-60 mb-2">📍 {{ $report->barangay->name }}, {{ $report->barangay->municipality }}</p>
-                            <a href="{{ route('community.reports.show', $report) }}" class="btn btn-xs btn-primary">View Report</a>
-                        </div>
-                    `);
-
-                    markers.push(marker);
+                    attribution: '© Geoapify, OpenStreetMap contributors',
+                    maxZoom: 19
                 }
-                @endif
-            @endforeach
+            ).addTo(map);
 
+            document.getElementById('map-loading')?.classList.add('hidden');
+
+            const reports = @json($reportData);
+            const markers = [];
+            const markerMap = {}; // store markers by report id
+
+            reports.forEach(function (r) {
+                if (!r || !r.lat || !r.lng || isNaN(r.lat) || isNaN(r.lng)) return;
+
+                const color = (r.status === 'verified') ? '#3b82f6' : '#22c55e';
+
+                const marker = L.circleMarker([r.lat, r.lng], {
+                    radius: 8,
+                    fillColor: color,
+                    color: '#ffffff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.9
+                }).addTo(map);
+
+                marker.bindPopup(`
+                    <div class="p-2 text-sm">
+                        <div class="font-semibold mb-1 capitalize">${r.type}</div>
+                        <p class="opacity-70 mb-1">${r.content ?? ''}</p>
+                        <p class="text-xs opacity-60 mb-2">📍 ${r.barangay ?? ''}, ${r.municipality ?? ''}</p>
+                        <a href="${r.url}" class="btn btn-xs btn-primary">View Report</a>
+                    </div>
+                `);
+
+                markerMap[r.id] = marker;
+                markers.push(marker);
+            });
+
+            // Fit all markers initially
             if (markers.length > 0) {
-                const group = new L.featureGroup(markers);
-                map.fitBounds(group.getBounds().pad(0.1));
+                const group = L.featureGroup(markers);
+                map.fitBounds(group.getBounds().pad(0.2));
             }
 
-            // Functions available globally
-            window.focusMarker = function(lat, lng, id) {
-                map.setView([lat, lng], 15);
-            };
+            // ✅ Focus function (by report ID)
+            window.focusMarker = function(reportId) {
+                if (!reportId) return;
 
-            window.resetMapView = function() {
-                if (markers.length > 0) {
-                    const group = new L.featureGroup(markers);
-                    map.fitBounds(group.getBounds().pad(0.1));
+                const marker = markerMap[reportId];
+                if (marker) {
+                    const latlng = marker.getLatLng();
+                    map.setView([latlng.lat, latlng.lng], 15, { animate: true });
+                    marker.openPopup();
+
+                    // Pulse highlight
+                    const originalRadius = marker.options.radius;
+                    marker.setStyle({ radius: originalRadius + 3 });
+                    setTimeout(() => marker.setStyle({ radius: originalRadius }), 500);
                 } else {
-                    map.setView(defaultCenter, 10);
+                    console.warn('Marker not found for report id:', reportId);
                 }
             };
         });
-    </script>
+        </script>
 
-    <style>
-        html,
-        body,
-        #map {
-            height: 100%;
-        }
-
-        .custom-marker {
-            background: transparent;
-            border: none;
-        }
-
-        .leaflet-container {
-            z-index: 0 !important;
-        }
-
-        .leaflet-popup-content-wrapper {
-            border-radius: 0.5rem;
-        }
-    </style>
+        <style>
+            html, body, #map { height: 100%; }
+            .leaflet-popup-content-wrapper { border-radius: 0.5rem; }
+        </style>
     @endpush
 </x-app-layout>

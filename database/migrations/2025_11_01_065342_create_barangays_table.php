@@ -16,9 +16,11 @@ return new class extends Migration
             $table->string('name');
             $table->string('municipality');
             $table->string('province');
-            $table->decimal('latitude', 10, 7);
-            $table->decimal('longitude', 10, 7);
+            $table->decimal('latitude', 18, 14);
+            $table->decimal('longitude', 18, 14);
             $table->enum('risk_level', ['low', 'medium', 'high'])->default('low');
+            $table->string('source')->default('fallback'); // e.g., nominatim | geoapify | manual | fallback
+            $table->float('accuracy', 8, 2)->nullable();   // e.g., confidence level 0–100
             $table->timestamps();
 
             $table->index(['municipality', 'province']);
